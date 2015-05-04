@@ -1,1 +1,1 @@
-See runme_ising.m for an example using minimum probability flow learning for parameter estimation in an Ising model.
+See ising_edge_estimation for an example of using MPF learning for parameter estimation of a single clique within an Ising model.
