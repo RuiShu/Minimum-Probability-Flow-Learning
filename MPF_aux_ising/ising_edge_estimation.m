@@ -7,7 +7,7 @@ function ising_edge_estimation(j, k)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% initialize
-nsamples = 10000;                 % number of training samples
+nsamples = 1000;                 % number of training samples
 adj = adj_mat_generation(4, 4); % adjacency matrix
 [d, e] = size(adj);             % number of units
 
