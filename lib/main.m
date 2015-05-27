@@ -7,7 +7,7 @@ addpath(genpath('./mle_utilities'));
 addpath(genpath('./mpf_utilities'));
 
 %% Settings for MSE computation
-ntrials = 1;
+ntrials = 10;
 sq_err_Null = zeros(ntrials, 1);
 sq_err_MPF = zeros(ntrials, 1);
 sq_err_MLE = zeros(ntrials, 1);
@@ -21,7 +21,7 @@ adj = adj_mat_generation(grid_shape); % adjacency matrix
 
 J = ising_edge_generation(adj);
 
-for trial = 1:ntrials % can use parfor loop for parallelization
+parfor trial = 1:ntrials % can use parfor loop for parallelization
     Xall = ising_data_generation(J, grid_shape(1)*grid_shape(2), ...
                                  nsamples);
     fprintf(['Finished generating data Xall. size(Xall) = [# nodes, ' ...
@@ -68,7 +68,7 @@ disp(mean(time_MPF))
 fprintf('MPF MSE:             ');
 disp(mean(sq_err_MPF));
 
-fprintf('MPF Average run time:');
+fprintf('MLE Average run time:');
 disp(mean(time_MLE))
 
 fprintf('MLE MSE:             ');
