@@ -24,7 +24,6 @@ aux_j = sum(aux_idx(1:j));
 aux_k = sum(aux_idx(1:k));
 
 %% minFunc Settings
-addpath(genpath('./minFunc_2012'));
 % maxlinesearch is excessive just to be safe!!!!!! 
 % learning works fine if this is just a few hundred 
 maxlinesearch = 10000; 

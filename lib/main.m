@@ -1,5 +1,11 @@
 function main()
 
+%% Load paths
+addpath(genpath('./gen_utilities'));
+addpath(genpath('./gen_utilities/minFunc_2012'));
+addpath(genpath('./mle_utilities'));
+addpath(genpath('./mpf_utilities'));
+
 %% Settings for MSE computation
 ntrials = 1;
 sq_err_MPF = zeros(ntrials, 1);
