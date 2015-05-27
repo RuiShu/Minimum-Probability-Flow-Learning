@@ -150,7 +150,7 @@ disp(J(10, 11))
 % disp(Jnew_aux(aux_j, aux_k))
 % fprintf('Estimated parameter by restricted aux MRF   ');
 % disp(Jnew_aux_restricted(aux_j, aux_k))
-fprintf('Estimated parameter by subrestricted aux MRF');
+fprintf('Estimated parameter by subrestricted aux MRF  ');
 disp(Jnew_aux_subrestricted(aux_j, aux_k))
 disp(Jnew_aux_subrestricted(3, 4))
 disp(Jnew_aux_subrestricted(5, 6))

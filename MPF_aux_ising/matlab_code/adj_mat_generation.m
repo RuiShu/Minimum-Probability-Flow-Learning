@@ -1,4 +1,7 @@
-function adj = adj_mat_generation(r, c)
+function adj = adj_mat_generation(grid_shape)
+
+r = grid_shape(1);
+c = grid_shape(2);
 
 diagVec1 = repmat([ones(c-1,1); 0],r,1);  %# Make the first diagonal vector
                                           %#   (for horizontal connections)
