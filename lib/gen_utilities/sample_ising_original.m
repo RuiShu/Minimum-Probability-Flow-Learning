@@ -4,7 +4,7 @@
 % Attribution-Noncommercial License.
 % (http://creativecommons.org/licenses/by-nc/3.0/)
 
-function X_out = sample_ising( W, nsamples, burnin, independent_steps )
+function X_out = sample_ising_original( W, nsamples, burnin, independent_steps )
 nsamplingsteps = burnin + floor((nsamples-1)*(independent_steps));
 ndims = size(W, 1 );
 
@@ -27,7 +27,6 @@ next_sample = burnin;
 
 bias = diag(W);
 W = W - diag(diag(W));
-W = -1*W;
 
 for si = 1:nsamplingsteps
     E_act = 2*W(upd_i(si),:) * x + bias(upd_i(si));
@@ -35,7 +34,7 @@ for si = 1:nsamplingsteps
     if p_act > uni_rand(si)
         x(upd_i(si)) = 1;
     else
-        x(upd_i(si)) = -1;
+        x(upd_i(si)) = 0;
     end	   
     if si == next_sample % copy to the output array if appropriate
         next_sample = si + independent_steps;

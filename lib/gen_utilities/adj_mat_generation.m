@@ -13,4 +13,4 @@ adj = diag(diagVec1,1)+...                %# Add the diagonals to a zero matrix
 adj = adj+adj.';                         %'# Add the matrix to a transposed
                                           %#   copy of itself to make it
                                           %#   symmetric
-					  
+

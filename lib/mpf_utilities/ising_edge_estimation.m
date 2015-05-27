@@ -7,8 +7,7 @@ function edge_weight = ising_edge_estimation(Xall, adj, j, k)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% initialize
-nsamples = 1000;                 % number of training samples
-[d, ~] = size(adj);             % number of units
+d = size(adj, 1);                       % number of units
 
 % Check if j and k are even connected in adj matrix
 if adj(j, k) == 0

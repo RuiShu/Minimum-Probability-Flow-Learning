@@ -6,7 +6,7 @@ nnodes = size(X, 2);
 mu = mean_parameters(X);
 
 % Dichotomous variable for partition function.
-x = dec2bin(0:2^nnodes - 1) - '0';x(x == 0) = -1;
+x = dec2bin(0:2^nnodes - 1) - '0'; % x(x == 0) = -1;
 
 % Set up a symbolic matrix of real-valued random variables that correspond
 % to the edge weights in the network. Set the lower triangular portion and

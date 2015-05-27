@@ -75,5 +75,5 @@ theta_est_trim = theta_est(theta ~= 0);
 e = (theta_trim - theta_est_trim);
 e = e'*e;
 
-% disp([theta_trim, theta_est_trim]);
+disp([theta_trim, theta_est_trim]);
 % disp(e)
