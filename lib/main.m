@@ -8,9 +8,11 @@ addpath(genpath('./mpf_utilities'));
 
 %% Settings for MSE computation
 ntrials = 1;
-sq_err_MPF = zeros(ntrials, 1);
 sq_err_Null = zeros(ntrials, 1);
+sq_err_MPF = zeros(ntrials, 1);
+sq_err_MLE = zeros(ntrials, 1);
 time_MPF = zeros(ntrials, 1);
+time_MLE = zeros(ntrials, 1);
 
 %% Settings for data generation
 grid_shape = [2, 3];
@@ -49,18 +51,29 @@ for trial = 1:ntrials % can use parfor loop for parallelization
 
     %% Maximum Likelihood Estimation
     fprintf('MLE Estimation:\n');
+    t = tic();
     [theta_est, e] = variational_estimate(J, Xall', ...
                                           1, 1:size(J, 1));
+    t = toc(t);
+    time_MLE(trial) = t;
+    sq_err_MLE(trial) = e;
     fprintf('Square error: ');
     disp(e);
 end
 
 %% Results
-fprintf('Average run time:    ');
+fprintf('MPF Average run time:');
 disp(mean(time_MPF))
 
 fprintf('MPF MSE:             ');
 disp(mean(sq_err_MPF));
 
+fprintf('MPF Average run time:');
+disp(mean(time_MLE))
+
+fprintf('MLE MSE:             ');
+disp(mean(sq_err_MLE))
+
 fprintf('Null hypothesis MSE: ');
 disp(mean(sq_err_Null));
+
