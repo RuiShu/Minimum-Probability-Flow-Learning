@@ -7,105 +7,145 @@ addpath(genpath('./mle_utilities'));
 addpath(genpath('./mpf_utilities'));
 
 %% Settings for MSE computation
-ntrials = 1;
+ntrials = 10;
+edge_by_edge = 0;
+mpf = 1;
+mle = 0;
+mpf_edge = 1;
+
 sq_err_Null = zeros(ntrials, 1);
-sq_err_MPF = zeros(ntrials, 1);
-sq_err_MLE = zeros(ntrials, 1);
-time_MPF = zeros(ntrials, 1);
-time_MLE = zeros(ntrials, 1);
+
+if mpf
+    sq_err_MPF = zeros(ntrials, 1);
+    time_MPF = zeros(ntrials, 1);
+end
+
+if mpf_edge
+    sq_err_MPF_edge = zeros(ntrials, 1);
+    time_MPF_edge = zeros(ntrials, 1);
+end
+
+if mle
+    sq_err_MLE = zeros(ntrials, 1);
+    time_MLE = zeros(ntrials, 1);
+end
 
 %% Settings for data generation
-grid_shape = [3 1];
-nsamples = 10000;
+grid_shape = [10 20];
+nsamples = 1000;
 adj = adj_mat_generation(grid_shape); % adjacency matrix
 
 %% Adjustment
-adj = ones(3) - eye(3);
+%% adj = ones(size(adj));
 J = ising_edge_generation(adj);
-%% J = [0 -1.4 ; -1.4 0];
-disp(J);
+
+%% Xall_bin = ising_data_generation(J, nsamples, 'original'); % for MPF
 
 for trial = 1:ntrials % can use parfor loop for parallelization
-%     Xall_bin = (Xall_dic + 1)/2;
-%     Xall_bin = ising_data_generation(J/2, nsamples);
-%     Xall_dic = (Xall_bin - 0.5)*2;
-%     disp(mean(Xall_dic, 2))
-%     disp(mean(Xall_dic(1, :) .* Xall_dic(2, :), 2))
-
-%     Xall_dic1 = ising_data_generation_james(J, nsamples);
-%     Xall_bin1 = (Xall_dic + 1)/2;
-%     disp(mean(Xall_dic1, 2));
-%     disp(mean(Xall_dic1(1, :) .* Xall_dic1(2, :), 2))
-
-    Xall_dic = ising_data_generation(J, nsamples, 'new'); % for James
     Xall_bin = ising_data_generation(J, nsamples, 'original'); % for MPF
-    fprintf('Info on Xall, direct dichotomous\n');
-    fprintf('Info on Xall, binary-based dichotomous\n');
-    Xall_dic2 = (Xall_bin - 0.5)*2;
-    disp(Xall_dic2(:,1:10))
-    disp(mean(Xall_dic2, 2))
-    disp(mean(Xall_dic2(1, :) .* Xall_dic2(2, :), 2))
 
     fprintf(['Finished generating data Xall. size(Xall) = [# nodes, ' ...
              '# samples]:\n']);
     disp(size(Xall_bin));
     
     %% Minimum Probability Flow
-    fprintf('MPF Estimation:\n');
-    J_estimate = zeros(size(adj));
-
-    t = tic();
-
-    if 1
-        J_estimate = mpf_estimate(adj, Xall_bin);
-    else
-        for j = 1:size(J, 1)
-            for k = (j+1):size(J, 2)
-                J_estimate(j, k) = ising_edge_estimation(Xall_bin, adj, j, k);
-                J_estimate(k, j) = J_estimate(j, k);
+    if mpf
+        fprintf('MPF Estimation:\n');
+        J_estimate = zeros(size(adj));
+        
+        t = tic();
+        if edge_by_edge
+            v = 1:size(J, 1);
+            for j = 1:size(J, 1)
+                for k = (j+1):size(J, 1) % v(adj(j, :) == 1)
+                    J_estimate(j, k) = mpf_edge_estimation(Xall_bin, ...
+                                                           adj, j, k, grid_shape);
+                    J_estimate(k, j) = J_estimate(j, k);
+                end
             end
-            fprintf('%.3f complete. Trial %3d out of %3d\n', ...
-                    j/size(J, 1), trial, ntrials);
+        else
+            J_estimate = mpf_estimate(adj, Xall_bin);
         end
+        t = toc(t);
+        time_MPF(trial) = t;
+        
+        fprintf('Square error: ');
+        sq_err_MPF(trial) = sum((J(:) - J_estimate(:)).^2);
+        sq_err_Null(trial) = sum(J(:).^2);
+        disp(sq_err_MPF(trial));
     end
 
-    t = toc(t);
-    time_MPF(trial) = t;
-    sq_err_MPF(trial) = sum((J(:) - J_estimate(:)).^2);
-    sq_err_Null(trial) = sum(J(:).^2);
+    %% MPF Edge
+    if mpf_edge
+        fprintf('MPF Edge Estimation:\n');
+        J_estimate = zeros(size(adj));
+        
+        t = tic();
+        v = 1:size(J, 1);
+        for j = 1:size(J, 1)
+            kv = v(adj(j, :) == 1);
+            for k = kv(kv > j)
+                J_estimate(j, k) = mpf_edge_estimation(Xall_bin, ...
+                                                       adj, j, k, grid_shape);
+                J_estimate(k, j) = J_estimate(j, k);
+            end
+        end
+        t = toc(t);
+        time_MPF_edge(trial) = t;
+        
+        fprintf('Square error: ');
+        sq_err_MPF_edge(trial) = sum((J(:) - J_estimate(:)).^2);
+        disp(sq_err_MPF_edge(trial));
+    end
 
-    disp(J_estimate);
+    if mle
+        %% Maximum Likelihood Estimation
+        fprintf('MLE Estimation:\n');
+        t = tic();
+        if edge_by_edge
+            for j = 1:size(J, 1)
+                for k = (j+1):size(J, 2)
+                    J_estimate(j, k) = mle_edge_estimation(Xall_bin, adj, j, k);
+                    J_estimate(k, j) = J_estimate(j, k);
+                end
+            end
+        else
+            J_estimate = mle_estimate(adj, Xall_bin);
+        end
+        t = toc(t);
+        time_MLE(trial) = t;
 
-    fprintf('Square error: ');
-    disp(sum((J(:) - J_estimate(:)).^2));
-
-    %% Maximum Likelihood Estimation
-    fprintf('MLE Estimation:\n');
-    t = tic();
-    [theta_est, e] = variational_estimate(J, Xall_bin', ...
-                                          1, 1:size(J, 1));
-    t = toc(t);
-    time_MLE(trial) = t;
-    sq_err_MLE(trial) = e;
-
-    
-    fprintf('Square error: ');
-    disp(e);
+        fprintf('Square error: ');
+        sq_err_MLE(trial) = sum((J(:) - J_estimate(:)).^2);
+        disp(sq_err_MLE(trial));
+    end
 end
 
 %% Results
-fprintf('MPF Average run time:');
-disp(mean(time_MPF))
+if mpf
+    fprintf('MPF Average run time:      ');
+    disp(mean(time_MPF))
 
-fprintf('MPF MSE:             ');
-disp(mean(sq_err_MPF));
+    fprintf('MPF MSE:                   ');
+    disp(mean(sq_err_MPF));
+end
 
-fprintf('MLE Average run time:');
-disp(mean(time_MLE))
+if mpf_edge
+    fprintf('MPF Edge Average run time: ');
+    disp(mean(time_MPF_edge))
 
-fprintf('MLE MSE:             ');
-disp(mean(sq_err_MLE))
+    fprintf('MPF Edge MSE:              ');
+    disp(mean(sq_err_MPF_edge));
+end
 
-fprintf('Null hypothesis MSE: ');
+if mle
+    fprintf('MLE Average run time:      ');
+    disp(mean(time_MLE))
+
+    fprintf('MLE MSE:                   ');
+    disp(mean(sq_err_MLE))
+end 
+
+fprintf('Null hypothesis MSE:       ');
 disp(mean(sq_err_Null));
 

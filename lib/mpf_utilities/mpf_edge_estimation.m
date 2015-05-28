@@ -1,4 +1,4 @@
-function edge_weight = ising_edge_estimation(Xall, adj, j, k)
+function edge_weight = mpf_edge_estimation(Xall, adj, j, k, grid_shape)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Computes the edge weight between j and k in an ising lattice based on %
 % multiple methods:                                                     %
@@ -18,6 +18,40 @@ end
 
 % Find all nodes in the clique
 aux_idx = (adj(j,:) + adj(k,:)) > 0;
+
+% method = 'Aux MRF Adjusted Restricted Connection';
+% method = 'Aux MRF Restricted Connection';
+method = 'AMAC'; 
+
+if strcmp(method, 'AMRC')
+    %% Temporary setup for aux_adj based on grid shape
+    vec = (adj(j,:) + adj(k,:)) > 0;
+
+    for i = [j k]
+        extra_idx = (i - 1 - grid_shape(2));
+        if extra_idx > 0 && extra_idx <= size(adj, 1)
+            vec(extra_idx) = 1;
+        end
+
+        extra_idx = (i - 1 + grid_shape(2));
+        if extra_idx > 0 && extra_idx <= size(adj, 1)
+            vec(extra_idx) = 1;
+        end
+
+        extra_idx = (i + 1 - grid_shape(2));
+        if extra_idx > 0 && extra_idx <= size(adj, 1)
+            vec(extra_idx) = 1;
+        end
+
+        extra_idx = (i + 1 + grid_shape(2));
+        if extra_idx > 0 && extra_idx <= size(adj, 1)
+            vec(extra_idx) = 1;
+        end
+    end
+
+    aux_idx = vec > 0;
+end
+
 % Index of j and k in the clique
 aux_j = sum(aux_idx(1:j));
 aux_k = sum(aux_idx(1:k));
@@ -62,6 +96,10 @@ aux_adj_subrestricted = ones(size(aux_adj));
 aux_adj_subrestricted([aux_j aux_k], :) = aux_adj([aux_j aux_k], :);
 aux_adj_subrestricted(:, [aux_j aux_k]) = aux_adj(:, [aux_j aux_k]); 
 
+% aux_adj_test: is like aux_adj, but with 2 dimensional edge barrier
+% assumes an ising grid format!!
+aux_adj_test = aux_adj;
+
 % Construct J for auxiliary matrix
 Jnew_aux = Jnew(aux_idx, aux_idx);
 Jnew_aux_restricted = Jnew_aux .* aux_adj;
@@ -84,8 +122,6 @@ t_min = tic();
 % by flipping all bits.  This connectivity pattern performs better in cases
 % (like neural spike trains) where activity is extremely sparse.
 
-% method = 'Aux MRF Adjusted Restricted Connection';
-method = 'AMAC';    
 if strcmp(method, 'FMFC') % full MRF full connection
 % MPF estimation over full Markov Random Field
     Jnew = minFunc( @K_dK_ising_allbitflipextension, Jnew(:), minf_options, ...
@@ -121,6 +157,13 @@ elseif strcmp(method, 'AMAC') % aux MRF adjusted connection
     Jnew_aux_subrestricted = reshape(Jnew_aux_subrestricted, ...
                                      sum(aux_idx), sum(aux_idx));
     edge_weight = Jnew_aux_subrestricted(aux_j, aux_k);
+elseif strcmp(method, 'AMTC') % aux MRF test connection
+% MPF estimation over auxiliary MRV with connection wrapping the edge of interest
+    Jnew_aux_test = minFunc( @K_dK_ising_allbitflipextension, ...
+                                      Jnew_aux_test(:), minf_options, ...
+                                      Xall_aux, aux_adj_test);
+    Jnew_aux_test = reshape(Jnew_aux_test, sum(aux_idx), sum(aux_idx));
+    edge_weight = Jnew_aux_test(aux_j, aux_k);
 end
 
 % t_min = toc(t_min);
