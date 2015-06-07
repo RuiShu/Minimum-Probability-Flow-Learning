@@ -10,9 +10,20 @@ addpath(genpath('./mpf_utilities'));
 ntrials = 10;
 edge_by_edge = 0;
 mpf = 1;
-mle = 0;
-mpf_edge = 1;
+mle = 1;
+mpf_edge = 0;
 
+%% Settings for data generation
+grid_shape = [4 4];
+nsamples = 10000;
+adj = adj_mat_generation(grid_shape); % adjacency matrix
+
+% burnin = 100*size(adj, 1);
+% independent_steps = 10*size(adj, 1);
+burnin = 1000;
+independent_steps = 300;
+
+%% Initialize data-recording variables
 sq_err_Null = zeros(ntrials, 1);
 
 if mpf
@@ -30,19 +41,11 @@ if mle
     time_MLE = zeros(ntrials, 1);
 end
 
-%% Settings for data generation
-grid_shape = [10 20];
-nsamples = 1000;
-adj = adj_mat_generation(grid_shape); % adjacency matrix
-
-%% Adjustment
-%% adj = ones(size(adj));
 J = ising_edge_generation(adj);
 
-%% Xall_bin = ising_data_generation(J, nsamples, 'original'); % for MPF
-
 for trial = 1:ntrials % can use parfor loop for parallelization
-    Xall_bin = ising_data_generation(J, nsamples, 'original'); % for MPF
+    Xall_bin = ising_data_generation(J, nsamples, 'original', ...
+                                     burnin, independent_steps); % for MPF
 
     fprintf(['Finished generating data Xall. size(Xall) = [# nodes, ' ...
              '# samples]:\n']);
