@@ -1,0 +1,2 @@
+n: 10000, n_size:   3, mle sq_err:     3.3297, mle time:  2789.5764, mpf sq_err:     3.3215, mpf time:    23.4646
+n: 10000, n_size:   3, mle sq_err:     3.3839, mle time:  2368.6852, mpf sq_err:     3.3901, mpf time:    23.1859

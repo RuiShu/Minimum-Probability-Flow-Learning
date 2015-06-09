@@ -19,38 +19,7 @@ end
 % Find all nodes in the clique
 aux_idx = (adj(j,:) + adj(k,:)) > 0;
 
-% method = 'Aux MRF Adjusted Restricted Connection';
-% method = 'Aux MRF Restricted Connection';
 method = 'AMAC'; 
-
-if strcmp(method, 'AMRC')
-    %% Temporary setup for aux_adj based on grid shape
-    vec = (adj(j,:) + adj(k,:)) > 0;
-
-    for i = [j k]
-        extra_idx = (i - 1 - grid_shape(2));
-        if extra_idx > 0 && extra_idx <= size(adj, 1)
-            vec(extra_idx) = 1;
-        end
-
-        extra_idx = (i - 1 + grid_shape(2));
-        if extra_idx > 0 && extra_idx <= size(adj, 1)
-            vec(extra_idx) = 1;
-        end
-
-        extra_idx = (i + 1 - grid_shape(2));
-        if extra_idx > 0 && extra_idx <= size(adj, 1)
-            vec(extra_idx) = 1;
-        end
-
-        extra_idx = (i + 1 + grid_shape(2));
-        if extra_idx > 0 && extra_idx <= size(adj, 1)
-            vec(extra_idx) = 1;
-        end
-    end
-
-    aux_idx = vec > 0;
-end
 
 % Index of j and k in the clique
 aux_j = sum(aux_idx(1:j));
@@ -66,19 +35,6 @@ minf_options = [];
 minf_options.display = 'none';
 minf_options.maxFunEvals = maxlinesearch;
 minf_options.maxIter = maxlinesearch;
-
-% Note sure what this does
-% run_checkgrad = 0;
-% 
-% if run_checkgrad
-%     d = 5;
-%     nsamples = 2;
-%     minf_options.DerivativeCheck = 'on';
-% else
-% make the weight matrix repeatable
-%    rand('twister',355672);
-%    randn('state',355672);
-% end
 
 %% generate auxiliary data set for lattice grid...
 Xall_aux = Xall(aux_idx,:);
@@ -164,78 +120,4 @@ elseif strcmp(method, 'AMTC') % aux MRF test connection
                                       Xall_aux, aux_adj_test);
     Jnew_aux_test = reshape(Jnew_aux_test, sum(aux_idx), sum(aux_idx));
     edge_weight = Jnew_aux_test(aux_j, aux_k);
-end
-
-% t_min = toc(t_min);
-% fprintf( 'parameter estimation in %f seconds \n', t_min );
-
-% Generate edgeweight from auxiliary subrestricted MRF
-
-if false
-    fprintf('True parameter                              \n'); 
-    vertices = 1:(colsize*rowsize); 
-    for i = vertices(adj(j,:) == 1)
-        if i == k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(J(j,i))
-    end
-    disp(J(j,k))
-
-    fprintf('Estimated parameter by unrestricted full MRF\n'); 
-    for i = vertices(adj(j,:) == 1)
-        if i == k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(Jnew(j,i))
-    end
-    disp(Jnew(j, k))
-
-    fprintf('Estimated parameter by restricted full MRF  \n'); 
-    for i = vertices(adj(j,:) == 1)
-        if i == k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(Jnew_restricted(j,i))
-    end
-    disp(Jnew_restricted(j, k))
-
-    fprintf('Estimated parameter by unrestricted aux MRF \n'); 
-    for i = vertices(aux_adj(aux_j,:) == 1)
-        if i == aux_k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(Jnew_aux(aux_j,i))
-    end
-    disp(Jnew_aux(aux_j, aux_k))
-
-    fprintf('Estimated parameter by restricted aux MRF   \n'); 
-    for i = vertices(aux_adj(aux_j,:) == 1)
-        if i == aux_k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(Jnew_aux_restricted(aux_j,i))
-    end
-    disp(Jnew_aux_restricted(aux_j, aux_k))
-
-    fprintf('Estimated parameter by subrestricted aux MRF\n'); 
-    for i = vertices(aux_adj(aux_j,:) == 1)
-        if i == aux_k
-            fprintf('>>>'); 
-        else
-            fprintf('   '); 
-        end
-        disp(Jnew_aux_subrestricted(aux_j,i))
-    end
-    disp(Jnew_aux_subrestricted(aux_j, aux_k))
 end

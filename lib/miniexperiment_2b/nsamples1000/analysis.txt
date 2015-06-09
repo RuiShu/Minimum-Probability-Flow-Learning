@@ -1,0 +1,38 @@
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization1.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization1.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 1 13.6352 5.1357 13.6303 8.3548]
+
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization2.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization2.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 2 12.8160 7.6355 12.8909 4.1415]
+
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization3.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization3.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 3 NaN NaN 12.2747 3.3993]
+
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization5.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization5.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 5 NaN NaN 12.1917 3.1660]
+
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization6.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization6.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 6 NaN NaN 11.8123 3.3171]
+
+>> data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization10.mat')
+data = load('miniexperiment_2b/nsamples1000/miniexperiment_2b_factorization10.mat')
+data = 
+    recorder: [10x6 double]
+     results: [1000 10 NaN NaN 11.9873 4.1655]
+
+Best performance for MPF using: 6x6, both in terms of speed and efficiency
+Best performance for MLE using: 2x2, in terms of effiency
