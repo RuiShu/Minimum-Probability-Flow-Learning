@@ -1,23 +1,15 @@
 function run_experiments()
 
 %% Load paths
-addpath(genpath('./gen_utilities/data_generation'));
-addpath(genpath('./gen_utilities/indexer'));
-addpath(genpath('./gen_utilities/minFunc_2012'));
-addpath(genpath('./mle_utilities'));
-addpath(genpath('./mpf_utilities'));
-addpath(genpath('./experiment_1'));
-addpath(genpath('./experiment_2'));
-addpath(genpath('./experiment_3'));
-addpath(genpath('./miniexperiment_1'));
-addpath(genpath('./miniexperiment_2b'));
+addpath(genpath('.'));
 
 run_experiment_1 = 0;
 run_experiment_2 = 0;
-run_experiment_3 = 1;
+run_experiment_3 = 0;
+run_experiment_4 = 0;
 run_miniexperiment_1 = 0;
 run_miniexperiment_2a = 0;
-run_miniexperiment_2b = 0;
+run_miniexperiment_2b = 1;
 
 %% Note: remember to change how J is generated?
 
@@ -31,9 +23,9 @@ run_miniexperiment_2b = 0;
 %% Comparing: algorithm speed, estimator efficiency
 if run_experiment_1
     n = [10 100 1000 10000];
-    add = [400 600 4000 6000]
+    add = [100];
     for nsamples = add
-        experiment_1(nsamples)
+        experiment_1(nsamples);
     end
 end
 
@@ -46,7 +38,7 @@ end
 if run_miniexperiment_1
     dims = 1:5;
     for dim = dims
-        miniexperiment_1(dim)
+        miniexperiment_1(dim);
     end
 end
 
@@ -83,7 +75,7 @@ if run_miniexperiment_2b
     end
     
     for n_size = n
-        miniexperiment_2b(n_size)
+        miniexperiment_2b(n_size);
     end
 end
 
@@ -95,22 +87,31 @@ if run_experiment_2
     n = [10 100 1000 10000];
 
     for nsamples = n
-        experiment_2(nsamples)
+        experiment_2(nsamples);
     end
 end
-
 
 %% experiment_three: complete graph, for n = [10 100 1000 10000],
 %% run mpf v. mle for as large a graph as possible
 if run_experiment_3
     n = [10 100];
-    n = [1000 10000 13000 16000 19000 22000];
-    n = [10000 13000 16000 19000 22000];
-    nodes = 4:19;
+    n = [100];
+
+    nodes = 6;
     for nsamples = n
         for node_size = nodes
-            experiment_3(nsamples, node_size)
+            experiment_3(nsamples, node_size);
         end
+    end
+end
+
+
+%% experiment_four: chimera, for n = [10 100 1000 10000],
+%% run mpf v. mle 
+if run_experiment_4
+    n = [10000 1000 100 10];
+    for nsamples = n
+        experiment_4(nsamples);
     end
 end
 

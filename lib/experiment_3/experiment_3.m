@@ -4,7 +4,7 @@ function experiment_3(nsamples, node_size)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Settings for MSE computation
-ntrials = 10;
+ntrials = 50;
 
 %% Settings for data generation
 grid_shape = [1 node_size];      
@@ -22,7 +22,7 @@ burnin = 1000;
 independent_steps = 300;
 
 %% Initialize data-recording variables
-%% recorder is (ntrials, 5) matrix:
+%% recorder is (ntrials, 6) matrix:
 %% recorder(:,1) = nsamples
 %% recorder(:,2) = node_size
 %% recorder(:,3) = mle sq error

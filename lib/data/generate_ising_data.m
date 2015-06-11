@@ -1,6 +1,6 @@
-function generate_data()
+function generate_ising_data()
 
-%% Grid info
+%% Grid info for ising data
 grid_shape = [30 30];
 nsamples = 10000;
 
