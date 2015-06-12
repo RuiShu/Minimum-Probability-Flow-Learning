@@ -16,7 +16,7 @@ fprintf('To be saved in: %s\n', save_file);
 adj = adj_mat_generation(grid_shape); % adjacency matrix
 
 %% Initialize data-recording variables
-%% recorder is (ntrials, 5) matrix:
+%% recorder is (ntrials, 6) matrix:
 %% recorder(:,1) = sample size
 %% recorder(:,2) = factorization size
 %% recorder(:,3) = mle sq error

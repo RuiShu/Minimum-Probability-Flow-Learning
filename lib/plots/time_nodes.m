@@ -50,6 +50,5 @@ ylabel('Time (s)', 'interpreter', 'latex', 'fontsize', 25)
 h = legend('MLE K$_n$', 'MPF K$_n$', 'location', 'northeast');
 set(h, 'interpreter', 'latex', 'fontsize', 25);
 
-
 %% Save figure
 saveas(gcf,'plots/time_nodes','epsc')
